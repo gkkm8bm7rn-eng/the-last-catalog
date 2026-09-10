@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import Gallery from './components/Gallery'
-import { catalog, getObject } from './data/catalog'
+import { catalog, getObject, secretObject } from './data/catalog'
 import './styles.css'
 
 const readRoute = () => window.location.hash.replace(/^#\/?/, '') || 'home'
+const assetUrl = (file) => `${import.meta.env.BASE_URL}images/${file}`
 
 function navigate(route) {
   window.location.hash = route === 'home' ? '' : `/${route}`
@@ -50,7 +51,7 @@ function Home() {
         <button onClick={() => navigate('object/001')}>001</button>
         <button onClick={() => navigate('object/002')}>002</button>
         <button onClick={() => navigate('object/003')}>003</button>
-        <button className="secret-gap" onClick={() => navigate('object/004')} aria-label="Объект 004">004</button>
+        <span className="secret-gap" aria-hidden="true">—</span>
         <button onClick={() => navigate('object/005')}>005</button>
         <button onClick={() => navigate('object/006')}>006</button>
       </footer>
@@ -87,9 +88,14 @@ function Product({ item }) {
           </button>
         </section>
       </div>
-      <nav className="product-nav">
+
+      <nav className="product-nav" aria-label="Переход между объектами">
         {prev ? <button onClick={() => navigate(`object/${prev.id}`)}>← {prev.id} {prev.title}</button> : <span />}
-        {next ? <button onClick={() => navigate(`object/${next.id}`)}>{next.id} {next.title} →</button> : <button className="object-004-reveal" onClick={() => navigate('object/004')}>004</button>}
+        {next ? (
+          <button onClick={() => navigate(`object/${next.id}`)}>{next.id} {next.title} →</button>
+        ) : (
+          <button className="final-reveal" onClick={() => navigate('object/004')}>ЗАВЕРШИТЬ КАТАЛОГ →</button>
+        )}
       </nav>
     </main>
   )
@@ -99,16 +105,24 @@ function Secret004() {
   return (
     <main className="secret-page">
       <button className="back secret-back" onClick={() => navigate('home')}>← КАТАЛОГ</button>
-      <section className="mirror-room" aria-label="Объект 004 — место автора">
-        <div className="mirror" />
-        <div className="secret-plinth"><span>ОБЪЕКТ 004</span></div>
-        <div className="director-chair" aria-hidden="true">
-          <div className="chair-back">МЕСТО АВТОРА<br /><span>004</span></div>
-          <div className="chair-seat" />
-          <div className="chair-leg leg-a" />
-          <div className="chair-leg leg-b" />
-        </div>
-      </section>
+
+      {secretObject.imageReady ? (
+        <section className="secret-image-wrap" aria-label="Объект 004 — место автора">
+          <img src={assetUrl(secretObject.image)} alt="Пустой постамент Объекта 004 и режиссёрское кресло Место автора перед зеркалом" />
+        </section>
+      ) : (
+        <section className="mirror-room" aria-label="Объект 004 — место автора">
+          <div className="mirror" />
+          <div className="secret-plinth"><span>ОБЪЕКТ 004</span></div>
+          <div className="director-chair" aria-hidden="true">
+            <div className="chair-back">МЕСТО АВТОРА<br /><span>004</span></div>
+            <div className="chair-seat" />
+            <div className="chair-leg leg-a" />
+            <div className="chair-leg leg-b" />
+          </div>
+        </section>
+      )}
+
       <div className="secret-caption">
         <span>ОБЪЕКТ 004</span>
         <span>МЕСТО АВТОРА</span>
