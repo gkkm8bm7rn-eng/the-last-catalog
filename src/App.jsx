@@ -35,16 +35,25 @@ function Home() {
       </section>
 
       <section className="catalog-grid" id="catalog">
-        {catalog.map((item) => (
-          <button key={item.id} className={`catalog-card card-${item.id}`} onClick={() => navigate(`object/${item.id}`)}>
-            <div className="catalog-visual"><span>{item.id}</span></div>
-            <div className="catalog-card-copy">
-              <span className="eyebrow">ОБЪЕКТ {item.id}</span>
-              <h2>{item.title}</h2>
-              <p>{item.category}</p>
-            </div>
-          </button>
-        ))}
+        {catalog.map((item) => {
+          const cover = item.slides[0]
+          return (
+            <button key={item.id} className={`catalog-card card-${item.id}`} onClick={() => navigate(`object/${item.id}`)}>
+              <div className="catalog-visual">
+                {cover.ready ? (
+                  <img src={assetUrl(cover.file)} alt={cover.alt} />
+                ) : (
+                  <span>{item.id}</span>
+                )}
+              </div>
+              <div className="catalog-card-copy">
+                <span className="eyebrow">ОБЪЕКТ {item.id}</span>
+                <h2>{item.title}</h2>
+                <p>{item.category}</p>
+              </div>
+            </button>
+          )
+        })}
       </section>
 
       <footer className="catalog-index" aria-label="Нумерация объектов">
